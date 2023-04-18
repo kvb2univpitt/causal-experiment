@@ -1,0 +1,18 @@
+Bayes net simulation using Graph constructed by adding random forward edges
+graphsDropdownPreference = Random Foward DAG (Fixed Average Degree)
+simulationsDropdownPreference = Bayes Net
+numMeasures = 20
+numLatents = 0
+avgDegree = 2.0
+maxDegree = 1000
+maxIndegree = 1000
+maxOutdegree = 1000
+connected = false
+minCategories = 3
+maxCategories = 3
+numRuns = 1
+differentGraphs = false
+randomizeColumns = false
+sampleSize = 1000
+saveLatentVars = false
+seed = -1
