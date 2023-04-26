@@ -139,7 +139,7 @@ public class PagSamplingRfciRunner extends AbstractRunner {
         }
     }
 
-    private void printParameters(Parameters parameters, PrintStream writer) {
+    protected void printParameters(Parameters parameters, PrintStream writer) {
         ParamDescriptions paramDescs = ParamDescriptions.getInstance();
 
         writer.println("PAG Sampling RFCI");
@@ -175,7 +175,7 @@ public class PagSamplingRfciRunner extends AbstractRunner {
                 getParameterValue(parameters, Params.NO_RANDOMLY_DETERMINED_INDEPENDENCE));
     }
 
-    private Graph runSearch(DataModel dataModel, Parameters parameters) {
+    protected Graph runSearch(DataModel dataModel, Parameters parameters) {
         Rfci rfci = new Rfci((new ProbabilisticTest()).getTest(dataModel, parameters));
         rfci.setDepth(parameters.getInt(Params.DEPTH));
         rfci.setMaxPathLength(parameters.getInt(Params.MAX_PATH_LENGTH));
