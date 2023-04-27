@@ -16,10 +16,14 @@ public final class StringUtils {
     }
 
     public static String toString(Node x, Node y, Node... z) {
-        return String.format("P(%s,%s|%s)",
-                x.getName(),
-                y.getName(),
-                Arrays.stream(z).map(Node::getName).collect(Collectors.joining(",")));
+        return (z != null && z.length > 0)
+                ? String.format("P(%s,%s|%s)",
+                        x.getName(),
+                        y.getName(),
+                        Arrays.stream(z).map(Node::getName).collect(Collectors.joining(",")))
+                : String.format("P(%s,%s)",
+                        x.getName(),
+                        y.getName());
     }
 
 }

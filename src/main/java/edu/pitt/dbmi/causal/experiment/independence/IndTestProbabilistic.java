@@ -12,6 +12,8 @@ import edu.cmu.tetrad.search.SearchLogUtils;
 import edu.cmu.tetrad.util.RandomUtil;
 import edu.cmu.tetrad.util.TetradLogger;
 import edu.pitt.dbmi.algo.bayesian.constraint.inference.BCInference;
+import edu.pitt.dbmi.causal.experiment.calibration.GeneralValue;
+import edu.pitt.dbmi.causal.experiment.util.StringUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -61,10 +63,12 @@ public class IndTestProbabilistic implements IndependenceTest {
     private final BCInference bci;
 
     private IndTestDSep indTestDSeperation;
+    private List<GeneralValue> generalValues;
 
-    public IndTestProbabilistic(DataSet data, IndTestDSep indTestDSeperation) {
+    public IndTestProbabilistic(DataSet data, IndTestDSep indTestDSeperation, List<GeneralValue> generalValues) {
         this(data);
         this.indTestDSeperation = indTestDSeperation;
+        this.generalValues = generalValues;
     }
 
     //==========================CONSTRUCTORS=============================//
@@ -217,16 +221,12 @@ public class IndTestProbabilistic implements IndependenceTest {
             }
         }
 
-        IndependenceResult predicted = new IndependenceResult(new IndependenceFact(x, y, z), ind, p);
-        IndependenceResult observed = indTestDSeperation.checkIndependence(x, y, z);
+        if (generalValues != null) {
+            IndependenceResult observed = indTestDSeperation.checkIndependence(x, y, z);
+            generalValues.add(new GeneralValue(StringUtils.toString(x, y, z), p, (int) observed.getPValue()));
+        }
 
-//        System.out.printf("%s %f, %f%n",
-//                StringUtils.toString(x, y, z),
-//                predicted.getPValue(),
-//                observed.getPValue());
-        return predicted;
-
-//        return new IndependenceResult(new IndependenceFact(x, y, z), ind, p);
+        return new IndependenceResult(new IndependenceFact(x, y, z), ind, p);
     }
 
     public double probConstraint(BCInference bci, BCInference.OP op, Node x, Node y, Node[] z, Map<Node, Integer> indices) {

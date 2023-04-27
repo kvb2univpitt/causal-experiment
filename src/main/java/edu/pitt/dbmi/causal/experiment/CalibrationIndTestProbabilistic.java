@@ -30,7 +30,7 @@ public class CalibrationIndTestProbabilistic {
             Path iExperimentFolder = FileIO.createSubdirectory(experimentFolder, String.format("experiment_%d", i + 1));
 
             int numOfVariables = 20;
-            int numOfCases = 1000;
+            int numOfCases = 10000;
             int avgDegree = 3;
             Path dataFolder = FileIO.createSubdirectory(iExperimentFolder, "data");
             SimulatedData simData = SimulatedDataFactory.createBayesNetSimulationData(numOfVariables, numOfCases, avgDegree, SEEDS[i], dataFolder);
@@ -50,7 +50,7 @@ public class CalibrationIndTestProbabilistic {
         Parameters parameters = new Parameters();
 
         // pag sampling
-        int numRandomizedSearchModels = 100;
+        int numRandomizedSearchModels = 1;
         parameters.set(Params.NUM_RANDOMIZED_SEARCH_MODELS, numRandomizedSearchModels);
 
         // rfci

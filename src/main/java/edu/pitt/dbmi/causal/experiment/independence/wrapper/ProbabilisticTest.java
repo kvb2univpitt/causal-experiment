@@ -8,6 +8,7 @@ import edu.cmu.tetrad.search.IndTestDSep;
 import edu.cmu.tetrad.search.IndependenceTest;
 import edu.cmu.tetrad.util.Parameters;
 import edu.cmu.tetrad.util.Params;
+import edu.pitt.dbmi.causal.experiment.calibration.GeneralValue;
 import edu.pitt.dbmi.causal.experiment.independence.IndTestProbabilistic;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,8 +23,8 @@ public class ProbabilisticTest implements IndependenceWrapper {
 
     private static final long serialVersionUID = 23L;
 
-    public IndependenceTest getTest(DataModel dataSet, Parameters parameters, IndTestDSep indTestDSeperation) {
-        IndTestProbabilistic test = new IndTestProbabilistic(SimpleDataLoader.getDiscreteDataSet(dataSet), indTestDSeperation);
+    public IndependenceTest getTest(DataModel dataSet, Parameters parameters, IndTestDSep indTestDSeperation, List<GeneralValue> generalValues) {
+        IndTestProbabilistic test = new IndTestProbabilistic(SimpleDataLoader.getDiscreteDataSet(dataSet), indTestDSeperation, generalValues);
         test.setThreshold(parameters.getBoolean(Params.NO_RANDOMLY_DETERMINED_INDEPENDENCE));
         test.setCutoff(parameters.getDouble(Params.CUTOFF_IND_TEST));
         test.setPriorEquivalentSampleSize(parameters.getDouble(Params.PRIOR_EQUIVALENT_SAMPLE_SIZE));

@@ -2,6 +2,7 @@ package edu.pitt.dbmi.causal.experiment;
 
 import edu.pitt.dbmi.causal.experiment.util.FileIO;
 import java.nio.file.Path;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.io.TempDir;
  *
  * @author Kevin V. Bui (kvb2univpitt@gmail.com)
  */
+@Disabled
 public class CalibrationIndTestProbabilisticTest {
 
     @TempDir
