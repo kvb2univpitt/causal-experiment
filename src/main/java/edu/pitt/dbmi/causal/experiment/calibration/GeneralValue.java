@@ -18,6 +18,11 @@ public class GeneralValue {
         this.observedValue = observedValue;
     }
 
+    @Override
+    public String toString() {
+        return String.format("%s: %d, %f", label, observedValue, predictedValue);
+    }
+
     public String getLabel() {
         return label;
     }

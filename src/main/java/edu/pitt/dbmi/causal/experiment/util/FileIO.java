@@ -18,6 +18,7 @@
  */
 package edu.pitt.dbmi.causal.experiment.util;
 
+import edu.pitt.dbmi.causal.experiment.calibration.GeneralValue;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -28,6 +29,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -39,6 +41,29 @@ import java.util.stream.Collectors;
 public final class FileIO {
 
     private FileIO() {
+    }
+
+    public static List<GeneralValue> loadGeneralValues(Path file) throws IOException {
+        List<GeneralValue> generalValues = new LinkedList<>();
+
+        Pattern delimiter = Pattern.compile(",");
+        Files.readAllLines(file).forEach(line -> {
+            String[] fields = delimiter.split(line.trim());
+
+            List<String> values = new LinkedList<>();
+            for (int i = 0; i < fields.length - 2; i++) {
+                values.add(fields[i]);
+            }
+            String label = values.stream().collect(Collectors.joining(","))
+                    .replaceAll("\"", "")
+                    .trim();
+            double predictedValue = Double.parseDouble(fields[fields.length - 2].trim());
+            int observedValue = Integer.parseInt(fields[fields.length - 1].trim());
+
+            generalValues.add(new GeneralValue(label, predictedValue, observedValue));
+        });
+
+        return generalValues;
     }
 
     public static List<Path> getFiles(Path dir) {

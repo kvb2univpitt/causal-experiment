@@ -12,6 +12,7 @@ import edu.pitt.dbmi.causal.experiment.calibration.GeneralValue;
 import edu.pitt.dbmi.causal.experiment.independence.IndTestProbabilistic;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -23,8 +24,8 @@ public class ProbabilisticTest implements IndependenceWrapper {
 
     private static final long serialVersionUID = 23L;
 
-    public IndependenceTest getTest(DataModel dataSet, Parameters parameters, IndTestDSep indTestDSeperation, List<GeneralValue> generalValues) {
-        IndTestProbabilistic test = new IndTestProbabilistic(SimpleDataLoader.getDiscreteDataSet(dataSet), indTestDSeperation, generalValues);
+    public IndependenceTest getTest(DataModel dataSet, Parameters parameters, IndTestDSep indTestDSeperation, List<GeneralValue> generalValues, Set<String> condProbLabels) {
+        IndTestProbabilistic test = new IndTestProbabilistic(SimpleDataLoader.getDiscreteDataSet(dataSet), indTestDSeperation, generalValues, condProbLabels);
         test.setThreshold(parameters.getBoolean(Params.NO_RANDOMLY_DETERMINED_INDEPENDENCE));
         test.setCutoff(parameters.getDouble(Params.CUTOFF_IND_TEST));
         test.setPriorEquivalentSampleSize(parameters.getDouble(Params.PRIOR_EQUIVALENT_SAMPLE_SIZE));

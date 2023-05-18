@@ -5,7 +5,11 @@ import edu.pitt.dbmi.lib.math.classification.calibration.HosmerLemeshowRiskGroup
 import edu.pitt.dbmi.lib.math.classification.calibration.plot.HosmerLemeshowPlot;
 import edu.pitt.dbmi.lib.math.classification.data.ObservedPredictedValue;
 import edu.pitt.dbmi.lib.math.classification.plot.PlotColors;
+import edu.pitt.dbmi.lib.math.classification.plot.PlotLines;
 import edu.pitt.dbmi.lib.math.classification.plot.PlotShapes;
+import edu.pitt.dbmi.lib.math.classification.roc.DeLongROCCurve;
+import edu.pitt.dbmi.lib.math.classification.roc.ROC;
+import edu.pitt.dbmi.lib.math.classification.roc.plot.ROCCurvePlot;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Path;
@@ -23,12 +27,14 @@ public class GeneralValueStatistics {
     private final List<GeneralValue> generalValues;
 
     private final HosmerLemeshow hosmerLemeshow;
+    private final ROC roc;
 
     public GeneralValueStatistics(List<GeneralValue> generalValues) {
         this.generalValues = generalValues;
 
         ObservedPredictedValue[] observedPredictedValues = toObservedPredictedValues(generalValues);
         this.hosmerLemeshow = new HosmerLemeshowRiskGroup(observedPredictedValues);
+        this.roc = new DeLongROCCurve(observedPredictedValues);
     }
 
     public void saveStatistics(Path file) throws IOException {
@@ -50,6 +56,14 @@ public class GeneralValueStatistics {
     public void saveCalibrationPlot(String title, String name, int width, int height, Path file) throws IOException {
         HosmerLemeshowPlot plot = new HosmerLemeshowPlot(title);
         plot.addDataSeries(hosmerLemeshow, name, name, PlotColors.FOREST_GREEN, PlotShapes.CIRCLE_SHAPE, true);
+
+        plot.saveImageAsPNG(file.toFile(), width, height);
+    }
+
+    public void saveROCPlot(String title, String name, int width, int height, Path file) throws IOException {
+        String label = String.format("%s (AUC=%1.4f)", name, roc.getAreaUnderRocCurve());
+        ROCCurvePlot plot = new ROCCurvePlot(title);
+        plot.add(roc, "", label, PlotColors.FOREST_GREEN, PlotShapes.CIRCLE_SHAPE, PlotLines.SOLID_LINE);
 
         plot.saveImageAsPNG(file.toFile(), width, height);
     }

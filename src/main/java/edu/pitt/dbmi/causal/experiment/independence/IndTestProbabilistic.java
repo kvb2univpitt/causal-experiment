@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -64,11 +65,13 @@ public class IndTestProbabilistic implements IndependenceTest {
 
     private IndTestDSep indTestDSeperation;
     private List<GeneralValue> generalValues;
+    private Set<String> condProbLabels;
 
-    public IndTestProbabilistic(DataSet data, IndTestDSep indTestDSeperation, List<GeneralValue> generalValues) {
+    public IndTestProbabilistic(DataSet data, IndTestDSep indTestDSeperation, List<GeneralValue> generalValues, Set<String> condProbLabels) {
         this(data);
         this.indTestDSeperation = indTestDSeperation;
         this.generalValues = generalValues;
+        this.condProbLabels = condProbLabels;
     }
 
     //==========================CONSTRUCTORS=============================//
@@ -223,7 +226,23 @@ public class IndTestProbabilistic implements IndependenceTest {
 
         if (generalValues != null) {
             IndependenceResult observed = indTestDSeperation.checkIndependence(x, y, z);
-            generalValues.add(new GeneralValue(StringUtils.toString(x, y, z), p, (int) observed.getPValue()));
+
+            String condProbLabel = StringUtils.toString(x, y, z);
+            if (!condProbLabels.contains(condProbLabel)) {
+                condProbLabels.add(condProbLabel);
+                generalValues.add(new GeneralValue(condProbLabel, p, (int) observed.getPValue()));
+            }
+
+//            if (0.0 <= p && p < 0.1) {
+//                p = 0;
+//            } else if (0.1 <= p && p < 0.9) {
+//                p = 0.050000;
+//            } else if (0.9 <= p && p < 0.97) {
+//                p = 0.153846;
+//            } else {
+//                p = 0.699634;
+//            }
+//            generalValues.add(new GeneralValue(StringUtils.toString(x, y, z), p, (int) observed.getPValue()));
         }
 
         return new IndependenceResult(new IndependenceFact(x, y, z), ind, p);

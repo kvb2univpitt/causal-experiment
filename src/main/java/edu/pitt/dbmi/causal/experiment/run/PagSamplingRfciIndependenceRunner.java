@@ -24,9 +24,11 @@ import java.io.PrintStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -43,11 +45,11 @@ public class PagSamplingRfciIndependenceRunner extends PagSamplingRfciRunner {
         super(simulatedData, parameters);
     }
 
-    protected Graph runSearch(DataModel dataModel, Parameters parameters, List<GeneralValue> generalValues) {
+    protected Graph runSearch(DataModel dataModel, Parameters parameters, List<GeneralValue> generalValues, Set<String> condProbLabels) {
         Graph trueGraph = createGraph(dataModel, simulatedData.getPagFromDagGraph());
         IndTestDSep indTestDSeperation = new IndTestDSep(trueGraph, true);
 
-        Rfci rfci = new Rfci((new ProbabilisticTest()).getTest(dataModel, parameters, indTestDSeperation, generalValues));
+        Rfci rfci = new Rfci((new ProbabilisticTest()).getTest(dataModel, parameters, indTestDSeperation, generalValues, condProbLabels));
         rfci.setDepth(parameters.getInt(Params.DEPTH));
         rfci.setMaxPathLength(parameters.getInt(Params.MAX_PATH_LENGTH));
         rfci.setVerbose(parameters.getBoolean(Params.VERBOSE));
@@ -67,10 +69,11 @@ public class PagSamplingRfciIndependenceRunner extends PagSamplingRfciRunner {
         int numOfSearchRuns = 0;
         List<Graph> graphs = new LinkedList<>();
         List<GeneralValue> generalValues = new LinkedList<>();
+        Set<String> condProbLabels = new HashSet<>();
         int numRandomizedSearchModels = parameters.getInt(Params.NUM_RANDOMIZED_SEARCH_MODELS);
         while (graphs.size() < numRandomizedSearchModels) {
             System.out.printf("Starting search: %d%n", numOfSearchRuns + 1);
-            Graph graph = runSearch(dataSet, parameters, generalValues);
+            Graph graph = runSearch(dataSet, parameters, generalValues, condProbLabels);
             if (SearchGraphUtils.isLegalPag(graph).isLegalPag()) {
                 System.out.println("Search returns legal PAG.");
                 graphs.add(graph);
@@ -88,21 +91,27 @@ public class PagSamplingRfciIndependenceRunner extends PagSamplingRfciRunner {
 
         String outputDir = dirOut.toString();
 
-        GraphStatistics graphCalibration = new GraphStatistics(searchGraph, pagFromDagGraph);
-        graphCalibration.saveGraphData(Paths.get(outputDir, "directed_edge_data.csv"));
-        graphCalibration.saveStatistics(Paths.get(outputDir, "statistics.txt"));
-        graphCalibration.saveCalibrationPlot(
+        GraphStatistics graphStats = new GraphStatistics(searchGraph, pagFromDagGraph);
+        graphStats.saveGraphData(Paths.get(outputDir, "directed_edge_data.csv"));
+        graphStats.saveStatistics(Paths.get(outputDir, "statistics.txt"));
+        graphStats.saveCalibrationPlot(
                 "PAG Sampling RFCI", "pag-sampling-rfci",
                 1000, 1000,
                 Paths.get(outputDir, "calibration.png"));
+        graphStats.saveROCPlot("PAG Sampling RFCI", "pag-sampling-rfci",
+                1000, 1000, Paths.get(outputDir, "roc.png"));
 
-        GeneralValueStatistics generalValueStatistics = new GeneralValueStatistics(generalValues);
-        generalValueStatistics.saveData(Paths.get(outputDir, "independence_test_data.csv"));
-        generalValueStatistics.saveStatistics(Paths.get(outputDir, "independence_test_stats.txt"));
-        generalValueStatistics.saveCalibrationPlot(
+        GeneralValueStatistics genValStats = new GeneralValueStatistics(generalValues);
+        genValStats.saveData(Paths.get(outputDir, "independence_test_data.csv"));
+        genValStats.saveStatistics(Paths.get(outputDir, "independence_test_stats.txt"));
+        genValStats.saveCalibrationPlot(
                 "PAG Sampling RFCI: Probabilistic Test", "probabilistic",
                 1000, 1000,
                 Paths.get(outputDir, "independence_test_calibration.png"));
+        genValStats.saveROCPlot(
+                "PAG Sampling RFCI: Probabilistic Test", "probabilistic",
+                1000, 1000,
+                Paths.get(outputDir, "independence_test_roc.png"));
 
         GraphDetails.saveDetails(pagFromDagGraph, searchGraph, Paths.get(outputDir, "graph_details.txt"));
 
