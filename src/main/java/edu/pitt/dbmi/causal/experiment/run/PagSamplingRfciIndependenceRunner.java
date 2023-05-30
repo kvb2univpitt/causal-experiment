@@ -6,9 +6,9 @@ import edu.cmu.tetrad.graph.Edge;
 import edu.cmu.tetrad.graph.EdgeListGraph;
 import edu.cmu.tetrad.graph.Graph;
 import edu.cmu.tetrad.graph.Node;
-import edu.cmu.tetrad.search.IndTestDSep;
 import edu.cmu.tetrad.search.Rfci;
-import edu.cmu.tetrad.search.SearchGraphUtils;
+import edu.cmu.tetrad.search.test.IndTestDSep;
+import edu.cmu.tetrad.search.utils.GraphSearchUtils;
 import edu.cmu.tetrad.util.GraphSampling;
 import edu.cmu.tetrad.util.Parameters;
 import edu.cmu.tetrad.util.Params;
@@ -74,7 +74,7 @@ public class PagSamplingRfciIndependenceRunner extends PagSamplingRfciRunner {
         while (graphs.size() < numRandomizedSearchModels) {
             System.out.printf("Starting search: %d%n", numOfSearchRuns + 1);
             Graph graph = runSearch(dataSet, parameters, generalValues, condProbLabels);
-            if (SearchGraphUtils.isLegalPag(graph).isLegalPag()) {
+            if (GraphSearchUtils.isLegalPag(graph).isLegalPag()) {
                 System.out.println("Search returns legal PAG.");
                 graphs.add(graph);
             } else {
@@ -114,6 +114,7 @@ public class PagSamplingRfciIndependenceRunner extends PagSamplingRfciRunner {
                 Paths.get(outputDir, "independence_test_roc.png"));
 
         GraphDetails.saveDetails(pagFromDagGraph, searchGraph, Paths.get(outputDir, "graph_details.txt"));
+        GraphDetails.saveHistogramProbOfCorrectEdgeType(pagFromDagGraph, searchGraph, Paths.get(outputDir, "correct_edgetype_histogram.png"));
 
         Graphs.saveGraph(searchGraph, Paths.get(outputDir, "graph.txt"));
         Graphs.exportAsPngImage(searchGraph, 1000, 1000, Paths.get(outputDir, "graph.png"));

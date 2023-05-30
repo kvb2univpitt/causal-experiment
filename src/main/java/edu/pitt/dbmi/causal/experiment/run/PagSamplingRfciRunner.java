@@ -23,7 +23,7 @@ import edu.cmu.tetrad.data.DataModel;
 import edu.cmu.tetrad.data.DataSet;
 import edu.cmu.tetrad.graph.Graph;
 import edu.cmu.tetrad.search.Rfci;
-import edu.cmu.tetrad.search.SearchGraphUtils;
+import edu.cmu.tetrad.search.utils.GraphSearchUtils;
 import edu.cmu.tetrad.util.GraphSampling;
 import edu.cmu.tetrad.util.ParamDescriptions;
 import edu.cmu.tetrad.util.Parameters;
@@ -68,7 +68,7 @@ public class PagSamplingRfciRunner extends AbstractRunner {
         while (graphs.size() < numRandomizedSearchModels) {
             System.out.printf("Starting search: %d%n", numOfSearchRuns + 1);
             Graph graph = runSearch(dataSet, parameters);
-            if (SearchGraphUtils.isLegalPag(graph).isLegalPag()) {
+            if (GraphSearchUtils.isLegalPag(graph).isLegalPag()) {
                 System.out.println("Search returns legal PAG.");
                 graphs.add(graph);
             } else {

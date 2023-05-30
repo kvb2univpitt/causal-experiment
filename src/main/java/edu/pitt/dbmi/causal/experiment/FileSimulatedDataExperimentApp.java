@@ -20,7 +20,7 @@ package edu.pitt.dbmi.causal.experiment;
 
 import edu.cmu.tetrad.data.DataSet;
 import edu.cmu.tetrad.graph.Graph;
-import edu.cmu.tetrad.search.SearchGraphUtils;
+import edu.cmu.tetrad.search.utils.GraphSearchUtils;
 import edu.cmu.tetrad.util.Parameters;
 import edu.cmu.tetrad.util.Params;
 import edu.pitt.dbmi.causal.experiment.data.SimulatedData;
@@ -160,7 +160,7 @@ public class FileSimulatedDataExperimentApp {
         DataSet dataSet = (DataSet) ResourceLoader.loadDataModel(dataFile, Delimiter.TAB);
         Graph trueGraph = ResourceLoader.loadGraph(graphFile);
 
-        Graph pagFromDagGraph = SearchGraphUtils.dagToPag(trueGraph);
+        Graph pagFromDagGraph = GraphSearchUtils.dagToPag(trueGraph);
 
         return new SimulatedData(dataSet, trueGraph, pagFromDagGraph);
     }

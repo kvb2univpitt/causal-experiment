@@ -5,7 +5,6 @@ import edu.pitt.dbmi.lib.math.classification.calibration.HosmerLemeshowRiskGroup
 import edu.pitt.dbmi.lib.math.classification.calibration.plot.HosmerLemeshowPlot;
 import edu.pitt.dbmi.lib.math.classification.data.ObservedPredictedValue;
 import edu.pitt.dbmi.lib.math.classification.plot.PlotColors;
-import edu.pitt.dbmi.lib.math.classification.plot.PlotLines;
 import edu.pitt.dbmi.lib.math.classification.plot.PlotShapes;
 import edu.pitt.dbmi.lib.math.classification.roc.DeLongROCCurve;
 import edu.pitt.dbmi.lib.math.classification.roc.ROC;
@@ -61,9 +60,8 @@ public class GeneralValueStatistics {
     }
 
     public void saveROCPlot(String title, String name, int width, int height, Path file) throws IOException {
-        String label = String.format("%s (AUC=%1.4f)", name, roc.getAreaUnderRocCurve());
         ROCCurvePlot plot = new ROCCurvePlot(title);
-        plot.add(roc, "", label, PlotColors.FOREST_GREEN, PlotShapes.CIRCLE_SHAPE, PlotLines.SOLID_LINE);
+        plot.add(roc, "", name, PlotColors.FOREST_GREEN);
 
         plot.saveImageAsPNG(file.toFile(), width, height);
     }

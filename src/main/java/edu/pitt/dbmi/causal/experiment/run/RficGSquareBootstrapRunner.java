@@ -22,7 +22,7 @@ import edu.cmu.tetrad.algcomparison.independence.Gsquare;
 import edu.cmu.tetrad.data.DataSet;
 import edu.cmu.tetrad.graph.Graph;
 import edu.cmu.tetrad.search.Rfci;
-import edu.cmu.tetrad.search.SearchGraphUtils;
+import edu.cmu.tetrad.search.utils.GraphSearchUtils;
 import edu.cmu.tetrad.util.GraphSampling;
 import edu.cmu.tetrad.util.ParamDescriptions;
 import edu.cmu.tetrad.util.Parameters;
@@ -72,7 +72,7 @@ public class RficGSquareBootstrapRunner extends AbstractRunner {
         List<Graph> graphs = new LinkedList<>();
         for (DataSet data : dataSets) {
             Graph graph = runSearch(data, parameters);
-            if (SearchGraphUtils.isLegalPag(graph).isLegalPag()) {
+            if (GraphSearchUtils.isLegalPag(graph).isLegalPag()) {
                 graphs.add(graph);
             }
             numOfSearchRuns++;
@@ -86,7 +86,7 @@ public class RficGSquareBootstrapRunner extends AbstractRunner {
 
             DataSet sampleData = DataSampling.sampleWithReplacement(dataSet, randGen);
             Graph graph = runSearch(sampleData, parameters);
-            if (SearchGraphUtils.isLegalPag(graph).isLegalPag()) {
+            if (GraphSearchUtils.isLegalPag(graph).isLegalPag()) {
                 graphs.add(graph);
             }
         }

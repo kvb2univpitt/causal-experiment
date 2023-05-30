@@ -22,7 +22,7 @@ import edu.cmu.tetrad.algcomparison.independence.ProbabilisticTest;
 import edu.cmu.tetrad.data.DataSet;
 import edu.cmu.tetrad.graph.Graph;
 import edu.cmu.tetrad.search.Rfci;
-import edu.cmu.tetrad.search.SearchGraphUtils;
+import edu.cmu.tetrad.search.utils.GraphSearchUtils;
 import edu.cmu.tetrad.util.GraphSampling;
 import edu.cmu.tetrad.util.ParamDescriptions;
 import edu.cmu.tetrad.util.Parameters;
@@ -57,7 +57,7 @@ public class RficProbabilisticBootstrapApp {
 
     private static void run(Path dataFile, Path trueGraphFile, Path dirOut) throws Exception {
         Graph trueGraph = ResourceLoader.loadGraph(trueGraphFile);
-        Graph pagFromDagGraph = SearchGraphUtils.dagToPag(trueGraph);
+        Graph pagFromDagGraph = GraphSearchUtils.dagToPag(trueGraph);
         DataSet dataSet = (DataSet) ResourceLoader.loadDataModel(dataFile, Delimiter.TAB);
 
         // get algorithm parameters
@@ -75,7 +75,7 @@ public class RficProbabilisticBootstrapApp {
         List<Graph> graphs = new LinkedList<>();
         for (DataSet data : dataSets) {
             Graph graph = runSearch(data, parameters);
-            if (SearchGraphUtils.isLegalPag(graph).isLegalPag()) {
+            if (GraphSearchUtils.isLegalPag(graph).isLegalPag()) {
                 graphs.add(graph);
             }
             numOfSearchRuns++;
@@ -89,7 +89,7 @@ public class RficProbabilisticBootstrapApp {
 
             DataSet sampleData = DataSampling.sampleWithReplacement(dataSet, randGen);
             Graph graph = runSearch(sampleData, parameters);
-            if (SearchGraphUtils.isLegalPag(graph).isLegalPag()) {
+            if (GraphSearchUtils.isLegalPag(graph).isLegalPag()) {
                 graphs.add(graph);
             }
         }

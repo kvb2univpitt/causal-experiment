@@ -5,10 +5,10 @@ import edu.cmu.tetrad.data.DataSet;
 import edu.cmu.tetrad.data.DiscreteVariable;
 import edu.cmu.tetrad.graph.IndependenceFact;
 import edu.cmu.tetrad.graph.Node;
-import edu.cmu.tetrad.search.IndTestDSep;
-import edu.cmu.tetrad.search.IndependenceResult;
-import edu.cmu.tetrad.search.IndependenceTest;
-import edu.cmu.tetrad.search.SearchLogUtils;
+import edu.cmu.tetrad.search.test.IndTestDSep;
+import edu.cmu.tetrad.search.test.IndependenceResult;
+import edu.cmu.tetrad.search.test.IndependenceTest;
+import edu.cmu.tetrad.search.utils.LogUtilsSearch;
 import edu.cmu.tetrad.util.RandomUtil;
 import edu.cmu.tetrad.util.TetradLogger;
 import edu.pitt.dbmi.algo.bayesian.constraint.inference.BCInference;
@@ -220,7 +220,7 @@ public class IndTestProbabilistic implements IndependenceTest {
         if (this.verbose) {
             if (ind) {
                 TetradLogger.getInstance().forceLogMessage(
-                        SearchLogUtils.independenceFactMsg(x, y, Arrays.asList(z), p));
+                        LogUtilsSearch.independenceFactMsg(x, y, Arrays.asList(z), p));
             }
         }
 

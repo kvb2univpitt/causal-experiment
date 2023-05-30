@@ -4,7 +4,7 @@ import edu.cmu.tetrad.algcomparison.independence.ChiSquare;
 import edu.cmu.tetrad.data.DataSet;
 import edu.cmu.tetrad.graph.Graph;
 import edu.cmu.tetrad.search.Rfci;
-import edu.cmu.tetrad.search.SearchGraphUtils;
+import edu.cmu.tetrad.search.utils.GraphSearchUtils;
 import edu.cmu.tetrad.util.GraphSampling;
 import edu.cmu.tetrad.util.ParamDescriptions;
 import edu.cmu.tetrad.util.Parameters;
@@ -55,7 +55,7 @@ public class RficChiSquareBootstrapRunner extends AbstractRunner {
         for (DataSet data : dataSets) {
             System.out.printf("Starting search: %d%n", numOfSearchRuns + 1);
             Graph graph = runSearch(data, parameters);
-            if (SearchGraphUtils.isLegalPag(graph).isLegalPag()) {
+            if (GraphSearchUtils.isLegalPag(graph).isLegalPag()) {
                 System.out.println("Search returns legal PAG.");
                 graphs.add(graph);
             } else {
@@ -70,7 +70,7 @@ public class RficChiSquareBootstrapRunner extends AbstractRunner {
             DataSet sampleData = DataSampling.sampleWithReplacement(dataSet, randGen);
             System.out.printf("Starting search: %d%n", numOfSearchRuns + 1);
             Graph graph = runSearch(sampleData, parameters);
-            if (SearchGraphUtils.isLegalPag(graph).isLegalPag()) {
+            if (GraphSearchUtils.isLegalPag(graph).isLegalPag()) {
                 System.out.println("Search returns legal PAG.");
                 graphs.add(graph);
             } else {

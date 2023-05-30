@@ -21,22 +21,35 @@ package edu.pitt.dbmi.causal.experiment.util;
 import edu.cmu.tetrad.data.DiscreteVariable;
 import edu.cmu.tetrad.graph.Edge;
 import edu.cmu.tetrad.graph.EdgeTypeProbability;
+import edu.cmu.tetrad.graph.EdgeTypeProbability.EdgeType;
 import edu.cmu.tetrad.graph.Endpoint;
 import edu.cmu.tetrad.graph.Graph;
 import edu.cmu.tetrad.graph.GraphUtils;
 import edu.cmu.tetrad.graph.Node;
 import edu.pitt.dbmi.causal.experiment.tetrad.Edges;
 import static edu.pitt.dbmi.causal.experiment.tetrad.Edges.getReversed;
+import java.awt.Color;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Path;
+import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartUtils;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.NumberTickUnit;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.ui.RectangleInsets;
+import org.jfree.data.statistics.HistogramDataset;
+import org.jfree.data.statistics.HistogramType;
 
 /**
  *
@@ -47,6 +60,60 @@ import java.util.TreeSet;
 public final class GraphDetails {
 
     private GraphDetails() {
+    }
+
+    public static void saveHistogramProbOfCorrectEdgeType(Graph trueGraph, Graph graph, Path file) throws IOException {
+        List<Double> data = new LinkedList<>();
+        trueGraph.getEdges().forEach(trueEdge -> {
+            String trueNode1 = trueEdge.getNode1().getName();
+            String trueNode2 = trueEdge.getNode2().getName();
+
+            Edge edge = graph.getEdge(graph.getNode(trueNode1), graph.getNode(trueNode2));
+            if (edge == null) {
+//                data.add(0.0);
+            } else {
+                boolean hasSameEdge = false;
+                EdgeType trueEdgeType = Edges.getEdgeType(trueEdge, trueEdge.getNode1(), trueEdge.getNode2());
+                for (EdgeTypeProbability etp : edge.getEdgeTypeProbabilities()) {
+                    EdgeType edgeType = (trueNode1.equals(edge.getNode1().getName()))
+                            ? etp.getEdgeType() : getReversed(etp.getEdgeType());
+                    if (trueEdgeType == edgeType) {
+                        data.add(etp.getProbability());
+                        hasSameEdge = true;
+                        break;
+                    }
+                }
+
+//                if (!hasSameEdge) {
+//                    data.add(0.0);
+//                }
+            }
+        });
+
+        double[] values = data.stream().mapToDouble(Double::doubleValue).toArray();
+
+        HistogramDataset dataset = new HistogramDataset();
+        dataset.setType(HistogramType.FREQUENCY);
+        dataset.addSeries("correct edge-type", values, 10, 0.0, 1.0);
+
+        JFreeChart histogram = ChartFactory.createHistogram("Probability of Correct Edge-Type Histogram", "Probability", "Frequency", dataset);
+        histogram.setBackgroundPaint(Color.WHITE);
+        histogram.setAntiAlias(true);
+        histogram.setPadding(new RectangleInsets(10, 10, 10, 10));
+
+        XYPlot plot = histogram.getXYPlot();
+        plot.setBackgroundPaint(Color.WHITE);
+        plot.setDomainGridlinePaint(Color.BLACK);
+        plot.setRangeGridlinePaint(Color.BLACK);
+
+        NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+        rangeAxis.setNumberFormatOverride(NumberFormat.getIntegerInstance());
+        rangeAxis.setTickUnit(new NumberTickUnit(1));
+
+        NumberAxis domainAxes = (NumberAxis) plot.getDomainAxis();
+        domainAxes.setTickUnit(new NumberTickUnit(0.1));
+
+        ChartUtils.saveChartAsPNG(file.toFile(), histogram, 1000, 1000);
     }
 
     public static void saveDetails(Graph trueGraph, Graph graph, Path file) throws IOException {

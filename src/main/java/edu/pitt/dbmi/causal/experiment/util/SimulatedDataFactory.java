@@ -24,7 +24,7 @@ import edu.cmu.tetrad.algcomparison.simulation.BayesNetSimulation;
 import edu.cmu.tetrad.algcomparison.simulation.Simulation;
 import edu.cmu.tetrad.data.DataSet;
 import edu.cmu.tetrad.graph.Graph;
-import edu.cmu.tetrad.search.SearchGraphUtils;
+import edu.cmu.tetrad.search.utils.GraphSearchUtils;
 import edu.cmu.tetrad.util.ParamDescriptions;
 import edu.cmu.tetrad.util.Parameters;
 import edu.cmu.tetrad.util.Params;
@@ -50,7 +50,7 @@ public final class SimulatedDataFactory {
         // save data and true graph
         DataSet dataSet = (DataSet) simulation.getDataModel(0);
         Graph trueGraph = simulation.getTrueGraph(0);
-        Graph pagFromDagGraph = SearchGraphUtils.dagToPag(trueGraph);
+        Graph pagFromDagGraph = GraphSearchUtils.dagToPag(trueGraph);
 
         new Comparison().saveToFilesSingleSimulation(dirOut.toString(), simulation, parameters);
 

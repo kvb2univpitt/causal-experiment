@@ -23,7 +23,7 @@ import edu.cmu.tetrad.data.DataModel;
 import edu.cmu.tetrad.data.DataSet;
 import edu.cmu.tetrad.graph.Graph;
 import edu.cmu.tetrad.search.Rfci;
-import edu.cmu.tetrad.search.SearchGraphUtils;
+import edu.cmu.tetrad.search.utils.GraphSearchUtils;
 import edu.cmu.tetrad.util.GraphSampling;
 import edu.cmu.tetrad.util.ParamDescriptions;
 import edu.cmu.tetrad.util.Parameters;
@@ -57,7 +57,7 @@ public class PagSamplingRfciApp {
 
     private static void run(Path dataFile, Path trueGraphFile, Path dirOut) throws IOException {
         Graph trueGraph = ResourceLoader.loadGraph(trueGraphFile);
-        Graph pagFromDagGraph = SearchGraphUtils.dagToPag(trueGraph);
+        Graph pagFromDagGraph = GraphSearchUtils.dagToPag(trueGraph);
         DataSet dataSet = (DataSet) ResourceLoader.loadDataModel(dataFile, Delimiter.TAB);
 
         Parameters parameters = getParameters();
@@ -70,7 +70,7 @@ public class PagSamplingRfciApp {
         int numRandomizedSearchModels = parameters.getInt(Params.NUM_RANDOMIZED_SEARCH_MODELS);
         while (graphs.size() < numRandomizedSearchModels) {
             Graph graph = runSearch(dataSet, parameters);
-            if (SearchGraphUtils.isLegalPag(graph).isLegalPag()) {
+            if (GraphSearchUtils.isLegalPag(graph).isLegalPag()) {
                 graphs.add(graph);
             }
             numOfSearchRuns++;
