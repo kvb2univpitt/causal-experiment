@@ -24,7 +24,7 @@ public class ProbabilisticTest implements IndependenceWrapper {
 
     private static final long serialVersionUID = 23L;
 
-    public IndependenceTest getTest(DataModel dataSet, Parameters parameters, IndTestDSep indTestDSeperation, List<GeneralValue> generalValues, Set<String> condProbLabels) {
+    public IndependenceTest getTest(DataModel dataSet, Parameters parameters, IndTestDSep indTestDSeperation, Set<GeneralValue> generalValues, Set<String> condProbLabels) {
         IndTestProbabilistic test = new IndTestProbabilistic(SimpleDataLoader.getDiscreteDataSet(dataSet), indTestDSeperation, generalValues, condProbLabels);
         test.setThreshold(parameters.getBoolean(Params.NO_RANDOMLY_DETERMINED_INDEPENDENCE));
         test.setCutoff(parameters.getDouble(Params.CUTOFF_IND_TEST));

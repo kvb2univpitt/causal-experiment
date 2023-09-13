@@ -53,7 +53,16 @@ public class GraphStatistics {
         this.graphData = GraphData.examineDirectEdge(searchGraph, trueGraph);
         this.edgeData = GraphData.examineEdges(searchGraph, trueGraph);
 
-        ObservedPredictedValue[] observedPredictedValues = toObservedPredictedValues(graphData);
+        List<ObservedPredictedValue> observedPredictedValues = toObservedPredictedValues(graphData);
+        this.hosmerLemeshow = new HosmerLemeshowRiskGroup(observedPredictedValues);
+        this.roc = new DeLongROCCurve(observedPredictedValues);
+    }
+
+    public GraphStatistics(Set<EdgeValue> graphData, Set<EdgeValue> edgeData) {
+        this.graphData = graphData;
+        this.edgeData = edgeData;
+
+        List<ObservedPredictedValue> observedPredictedValues = toObservedPredictedValues(graphData);
         this.hosmerLemeshow = new HosmerLemeshowRiskGroup(observedPredictedValues);
         this.roc = new DeLongROCCurve(observedPredictedValues);
     }
@@ -90,6 +99,8 @@ public class GraphStatistics {
 
     public void saveGraphData(Path file) throws IOException {
         try (PrintStream writer = new PrintStream(file.toFile())) {
+//            String.format("%s <-> %s,%f,%d", node1, node2, probability, observedValue);
+            writer.println("Edge,Predicted,Observed");
             GraphData.write(graphData, writer);
         }
     }
@@ -100,14 +111,14 @@ public class GraphStatistics {
         }
     }
 
-    private ObservedPredictedValue[] toObservedPredictedValues(Set<EdgeValue> graphData) {
+    private List<ObservedPredictedValue> toObservedPredictedValues(Set<EdgeValue> graphData) {
         List<ObservedPredictedValue> values = new LinkedList<>();
 
         graphData.forEach(data -> {
             values.add(new ObservedPredictedValue(data.getObservedValue(), data.getPredictedValue()));
         });
 
-        return values.stream().toArray(ObservedPredictedValue[]::new);
+        return values;
     }
 
 }

@@ -12,8 +12,10 @@ import edu.cmu.tetrad.search.utils.GraphSearchUtils;
 import edu.cmu.tetrad.util.GraphSampling;
 import edu.cmu.tetrad.util.Parameters;
 import edu.cmu.tetrad.util.Params;
+import edu.pitt.dbmi.causal.experiment.calibration.EdgeValue;
 import edu.pitt.dbmi.causal.experiment.calibration.GeneralValue;
 import edu.pitt.dbmi.causal.experiment.calibration.GeneralValueStatistics;
+import edu.pitt.dbmi.causal.experiment.calibration.GraphData;
 import edu.pitt.dbmi.causal.experiment.calibration.GraphStatistics;
 import edu.pitt.dbmi.causal.experiment.data.SimulatedData;
 import edu.pitt.dbmi.causal.experiment.independence.wrapper.ProbabilisticTest;
@@ -45,7 +47,7 @@ public class PagSamplingRfciIndependenceRunner extends PagSamplingRfciRunner {
         super(simulatedData, parameters);
     }
 
-    protected Graph runSearch(DataModel dataModel, Parameters parameters, List<GeneralValue> generalValues, Set<String> condProbLabels) {
+    protected Graph runSearch(DataModel dataModel, Parameters parameters, Set<GeneralValue> generalValues, Set<String> condProbLabels) {
         Graph trueGraph = createGraph(dataModel, simulatedData.getPagFromDagGraph());
         IndTestDSep indTestDSeperation = new IndTestDSep(trueGraph, true);
 
@@ -68,7 +70,7 @@ public class PagSamplingRfciIndependenceRunner extends PagSamplingRfciRunner {
 
         int numOfSearchRuns = 0;
         List<Graph> graphs = new LinkedList<>();
-        List<GeneralValue> generalValues = new LinkedList<>();
+        Set<GeneralValue> generalValues = new HashSet<>();
         Set<String> condProbLabels = new HashSet<>();
         int numRandomizedSearchModels = parameters.getInt(Params.NUM_RANDOMIZED_SEARCH_MODELS);
         while (graphs.size() < numRandomizedSearchModels) {
@@ -89,17 +91,67 @@ public class PagSamplingRfciIndependenceRunner extends PagSamplingRfciRunner {
 
         Graph searchGraph = GraphSampling.createGraphWithHighProbabilityEdges(graphs);
 
-        String outputDir = dirOut.toString();
+        // tail-arrow (directed)
+        Path edgeTypeDir = FileIO.createSubdirectory(dirOut, "tail_arrow");
+        String edgeTypeOutputDir = edgeTypeDir.toString();
+        Set<EdgeValue> graphData = GraphData.examineDirectEdge(searchGraph, pagFromDagGraph);
+        Set<EdgeValue> edgeData = GraphData.examineEdges(searchGraph, pagFromDagGraph);
+        GraphStatistics graphStats = new GraphStatistics(graphData, edgeData);
+        graphStats.saveGraphData(Paths.get(edgeTypeOutputDir, "ta_edge_data.csv"));
+        graphStats.saveStatistics(Paths.get(edgeTypeOutputDir, "ta_statistics.txt"));
+        graphStats.saveCalibrationPlot(
+                "PAG Sampling RFCI", "ta_pag-sampling-rfci",
+                1000, 1000,
+                Paths.get(edgeTypeOutputDir, "ta_calibration.png"));
+        graphStats.saveROCPlot("PAG Sampling RFCI", "ta_pag-sampling-rfci",
+                1000, 1000, Paths.get(edgeTypeOutputDir, "ta_roc.png"));
 
-        GraphStatistics graphStats = new GraphStatistics(searchGraph, pagFromDagGraph);
-        graphStats.saveGraphData(Paths.get(outputDir, "directed_edge_data.csv"));
-        graphStats.saveStatistics(Paths.get(outputDir, "statistics.txt"));
+        // circle-arrow
+        edgeTypeDir = FileIO.createSubdirectory(dirOut, "circle_arrow");
+        edgeTypeOutputDir = edgeTypeDir.toString();
+        graphData = GraphData.examineCircleArrowEdge(searchGraph, pagFromDagGraph);
+        edgeData = GraphData.examineEdges(searchGraph, pagFromDagGraph);
+        graphStats = new GraphStatistics(graphData, edgeData);
+        graphStats.saveGraphData(Paths.get(edgeTypeOutputDir, "ca_edge_data.csv"));
+        graphStats.saveStatistics(Paths.get(edgeTypeOutputDir, "ca_statistics.txt"));
         graphStats.saveCalibrationPlot(
                 "PAG Sampling RFCI", "pag-sampling-rfci",
                 1000, 1000,
-                Paths.get(outputDir, "calibration.png"));
-        graphStats.saveROCPlot("PAG Sampling RFCI", "pag-sampling-rfci",
-                1000, 1000, Paths.get(outputDir, "roc.png"));
+                Paths.get(edgeTypeOutputDir, "ca_calibration.png"));
+        graphStats.saveROCPlot("PAG Sampling RFCI", "ca_pag-sampling-rfci",
+                1000, 1000, Paths.get(edgeTypeOutputDir, "ca_roc.png"));
+
+        // circle-circle
+        edgeTypeDir = FileIO.createSubdirectory(dirOut, "circle_circle");
+        edgeTypeOutputDir = edgeTypeDir.toString();
+        graphData = GraphData.examineCircleCircleEdge(searchGraph, pagFromDagGraph);
+        edgeData = GraphData.examineEdges(searchGraph, pagFromDagGraph);
+        graphStats = new GraphStatistics(graphData, edgeData);
+        graphStats.saveGraphData(Paths.get(edgeTypeOutputDir, "cc_edge_data.csv"));
+        graphStats.saveStatistics(Paths.get(edgeTypeOutputDir, "cc_statistics.txt"));
+        graphStats.saveCalibrationPlot(
+                "PAG Sampling RFCI", "pag-sampling-rfci",
+                1000, 1000,
+                Paths.get(edgeTypeOutputDir, "cc_calibration.png"));
+        graphStats.saveROCPlot("PAG Sampling RFCI", "cc_pag-sampling-rfci",
+                1000, 1000, Paths.get(edgeTypeOutputDir, "cc_roc.png"));
+
+        // arrow-arrow
+        edgeTypeDir = FileIO.createSubdirectory(dirOut, "arrow_arrow");
+        edgeTypeOutputDir = edgeTypeDir.toString();
+        graphData = GraphData.examineArrowArrowEdge(searchGraph, pagFromDagGraph);
+        edgeData = GraphData.examineEdges(searchGraph, pagFromDagGraph);
+        graphStats = new GraphStatistics(graphData, edgeData);
+        graphStats.saveGraphData(Paths.get(edgeTypeOutputDir, "aa_edge_data.csv"));
+        graphStats.saveStatistics(Paths.get(edgeTypeOutputDir, "aa_statistics.txt"));
+        graphStats.saveCalibrationPlot(
+                "PAG Sampling RFCI", "pag-sampling-rfci",
+                1000, 1000,
+                Paths.get(edgeTypeOutputDir, "aa_calibration.png"));
+        graphStats.saveROCPlot("PAG Sampling RFCI", "aa_pag-sampling-rfci",
+                1000, 1000, Paths.get(edgeTypeOutputDir, "aa_roc.png"));
+
+        String outputDir = dirOut.toString();
 
         GeneralValueStatistics genValStats = new GeneralValueStatistics(generalValues);
         genValStats.saveData(Paths.get(outputDir, "independence_test_data.csv"));
@@ -114,11 +166,10 @@ public class PagSamplingRfciIndependenceRunner extends PagSamplingRfciRunner {
                 Paths.get(outputDir, "independence_test_roc.png"));
 
         GraphDetails.saveDetails(pagFromDagGraph, searchGraph, Paths.get(outputDir, "graph_details.txt"));
-        GraphDetails.saveHistogramProbOfCorrectEdgeType(pagFromDagGraph, searchGraph, Paths.get(outputDir, "correct_edgetype_histogram.png"));
-
+//        GraphDetails.saveHistogramProbOfCorrectEdgeType(pagFromDagGraph, searchGraph, Paths.get(outputDir, "correct_edgetype_histogram.png"));
+//
         Graphs.saveGraph(searchGraph, Paths.get(outputDir, "graph.txt"));
         Graphs.exportAsPngImage(searchGraph, 1000, 1000, Paths.get(outputDir, "graph.png"));
-
         // write out details
         try (PrintStream writer = new PrintStream(Paths.get(outputDir, "run_details.txt").toFile())) {
             writer.println("PAG Sampling RFCI");

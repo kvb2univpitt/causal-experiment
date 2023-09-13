@@ -64,10 +64,13 @@ public class IndTestProbabilistic implements IndependenceTest {
     private final BCInference bci;
 
     private IndTestDSep indTestDSeperation;
-    private List<GeneralValue> generalValues;
+    private Set<GeneralValue> generalValues;
     private Set<String> condProbLabels;
 
-    public IndTestProbabilistic(DataSet data, IndTestDSep indTestDSeperation, List<GeneralValue> generalValues, Set<String> condProbLabels) {
+    private static int nCount = 0;
+    private static int count = 0;
+
+    public IndTestProbabilistic(DataSet data, IndTestDSep indTestDSeperation, Set<GeneralValue> generalValues, Set<String> condProbLabels) {
         this(data);
         this.indTestDSeperation = indTestDSeperation;
         this.generalValues = generalValues;
@@ -210,6 +213,47 @@ public class IndTestProbabilistic implements IndependenceTest {
 
         posterior = p;
 
+        // reassign posterior probability
+//        if (p < 0.1) {
+//            p = 0;
+//        } else if (p >= 0.1 && p < 0.9) {
+//            p = 0.071429;
+//        } else if (p >= 0.9 && p < 0.97) {
+//            p = 0.125000;
+//        } else {
+//            p = 0.704698;
+//        }
+        // if (p < 0.1) {
+        //     p = 0;
+        // } else if (p >= 0.1 && p < 0.9) {
+        //    p = 0.050000;
+        // } else if (p >= 0.9 && p < 0.97) {
+        //    p = 0.153846;
+        // } else {
+        //    p = 0.699634;
+        // }
+        if (generalValues != null) {
+            int observed = (int) indTestDSeperation.checkIndependence(x, y, z).getPValue();
+
+            String condProbLabel = StringUtils.toString(x, y, z);
+            generalValues.add(new GeneralValue(condProbLabel, p, observed));
+//            if (!condProbLabels.contains(condProbLabel)) {
+//                condProbLabels.add(condProbLabel);
+//                generalValues.add(new GeneralValue(condProbLabel, p, observed));
+//
+////                if (p < 0.1) {
+////                } else if (p >= 0.1 && p < 0.9) {
+////                } else if (p >= 0.9 && p < 0.97) {
+////                } else {
+////                    nCount++;
+////                    if ((int) indTestDSeperation.checkIndependence(x, y, z).getPValue() > 0) {
+////                        count++;
+////                    }
+////                    System.out.printf("%d, %d => %f%n", count, nCount, ((float) count) / nCount);
+////                }
+//            }
+        }
+
         boolean ind;
         if (threshold) {
             ind = (p >= cutoff);
@@ -222,27 +266,6 @@ public class IndTestProbabilistic implements IndependenceTest {
                 TetradLogger.getInstance().forceLogMessage(
                         LogUtilsSearch.independenceFactMsg(x, y, Arrays.asList(z), p));
             }
-        }
-
-        if (generalValues != null) {
-            IndependenceResult observed = indTestDSeperation.checkIndependence(x, y, z);
-
-            String condProbLabel = StringUtils.toString(x, y, z);
-            if (!condProbLabels.contains(condProbLabel)) {
-                condProbLabels.add(condProbLabel);
-                generalValues.add(new GeneralValue(condProbLabel, p, (int) observed.getPValue()));
-            }
-
-//            if (0.0 <= p && p < 0.1) {
-//                p = 0;
-//            } else if (0.1 <= p && p < 0.9) {
-//                p = 0.050000;
-//            } else if (0.9 <= p && p < 0.97) {
-//                p = 0.153846;
-//            } else {
-//                p = 0.699634;
-//            }
-//            generalValues.add(new GeneralValue(StringUtils.toString(x, y, z), p, (int) observed.getPValue()));
         }
 
         return new IndependenceResult(new IndependenceFact(x, y, z), ind, p);

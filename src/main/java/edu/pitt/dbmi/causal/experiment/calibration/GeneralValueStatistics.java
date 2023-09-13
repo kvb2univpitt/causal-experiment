@@ -12,8 +12,11 @@ import edu.pitt.dbmi.lib.math.classification.roc.plot.ROCCurvePlot;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -23,15 +26,15 @@ import java.util.List;
  */
 public class GeneralValueStatistics {
 
-    private final List<GeneralValue> generalValues;
+    private final Set<GeneralValue> generalValues;
 
     private final HosmerLemeshow hosmerLemeshow;
     private final ROC roc;
 
-    public GeneralValueStatistics(List<GeneralValue> generalValues) {
+    public GeneralValueStatistics(Set<GeneralValue> generalValues) {
         this.generalValues = generalValues;
 
-        ObservedPredictedValue[] observedPredictedValues = toObservedPredictedValues(generalValues);
+        List<ObservedPredictedValue> observedPredictedValues = toObservedPredictedValues(generalValues);
         this.hosmerLemeshow = new HosmerLemeshowRiskGroup(observedPredictedValues);
         this.roc = new DeLongROCCurve(observedPredictedValues);
     }
@@ -68,20 +71,23 @@ public class GeneralValueStatistics {
 
     public void saveData(Path file) throws IOException {
         try (PrintStream writer = new PrintStream(file.toFile())) {
-            generalValues.forEach(value -> {
+            GeneralValue[] values = generalValues.toArray(GeneralValue[]::new);
+            Arrays.sort(values, Collections.reverseOrder());
+
+            Arrays.stream(values).forEach(value -> {
                 writer.printf("\"%s\",%f,%d%n", value.getLabel(), value.getPredictedValue(), value.getObservedValue());
             });
         }
     }
 
-    private ObservedPredictedValue[] toObservedPredictedValues(List<GeneralValue> generalValues) {
+    private List<ObservedPredictedValue> toObservedPredictedValues(Set<GeneralValue> generalValues) {
         List<ObservedPredictedValue> values = new LinkedList<>();
 
         generalValues.forEach(value -> {
             values.add(new ObservedPredictedValue(value.getObservedValue(), value.getPredictedValue()));
         });
 
-        return values.stream().toArray(ObservedPredictedValue[]::new);
+        return values;
     }
 
 }

@@ -117,7 +117,23 @@ public final class GraphData {
     }
 
     public static Set<EdgeValue> examineDirectEdge(Graph searchGraph, Graph trueGraph) {
-        Set<EdgeValue> edgeValues = createEdgeValues(trueGraph, EdgeType.ta);
+        return examineEdgeType(searchGraph, trueGraph, EdgeType.ta);
+    }
+
+    public static Set<EdgeValue> examineCircleArrowEdge(Graph searchGraph, Graph trueGraph) {
+        return examineEdgeType(searchGraph, trueGraph, EdgeType.ca);
+    }
+
+    public static Set<EdgeValue> examineCircleCircleEdge(Graph searchGraph, Graph trueGraph) {
+        return examineEdgeType(searchGraph, trueGraph, EdgeType.cc);
+    }
+
+    public static Set<EdgeValue> examineArrowArrowEdge(Graph searchGraph, Graph trueGraph) {
+        return examineEdgeType(searchGraph, trueGraph, EdgeType.aa);
+    }
+
+    public static Set<EdgeValue> examineEdgeType(Graph searchGraph, Graph trueGraph, EdgeType edgeType) {
+        Set<EdgeValue> edgeValues = createEdgeValues(trueGraph, edgeType);
         setObservedValues(trueGraph, edgeValues);
         setPredictedValues(searchGraph, edgeValues);
 
