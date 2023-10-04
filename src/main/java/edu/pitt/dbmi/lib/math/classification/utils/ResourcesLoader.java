@@ -18,16 +18,21 @@
  */
 package edu.pitt.dbmi.lib.math.classification.utils;
 
+import edu.pitt.dbmi.causal.experiment.calibration.GeneralValue;
 import edu.pitt.dbmi.lib.math.classification.data.ObservedPredictedValue;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -38,6 +43,41 @@ import java.util.regex.Pattern;
 public final class ResourcesLoader {
 
     private ResourcesLoader() {
+    }
+
+    public static Set<GeneralValue> loadGeneralValues(Path file, Pattern delimiter, boolean hasHeader) throws IOException {
+        Set<GeneralValue> generalValues = new HashSet<>();
+
+        try (BufferedReader reader = Files.newBufferedReader(file, StandardCharsets.UTF_8)) {
+            for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+                line = line.trim();
+
+                // skip blank lines
+                if (line.isEmpty()) {
+                    continue;
+                }
+
+                // skip header
+                if (hasHeader) {
+                    hasHeader = false;
+                    continue;
+                }
+
+                String[] fields = delimiter.split(line);
+                if (fields.length >= 3) {
+                    String[] strArray = new String[fields.length - 2];
+                    System.arraycopy(fields, 0, strArray, 0, strArray.length);
+                    String label = Arrays.stream(strArray).collect(Collectors.joining());
+                    label = line.substring(0, label.length() + strArray.length - 1);
+
+                    double predictedValue = Double.parseDouble(fields[fields.length - 2]);
+                    int observedValue = Integer.parseInt(fields[fields.length - 1]);
+                    generalValues.add(new GeneralValue(label, predictedValue, observedValue));
+                }
+            }
+        }
+
+        return generalValues;
     }
 
     /**
@@ -75,7 +115,7 @@ public final class ResourcesLoader {
                     continue;
                 }
 
-                String[] fields = delimiter.split(line.trim());
+                String[] fields = delimiter.split(line);
                 if (fields.length >= maxColumn) {
                     data.add(new ObservedPredictedValue(
                             Integer.parseInt(fields[observedIndex]),

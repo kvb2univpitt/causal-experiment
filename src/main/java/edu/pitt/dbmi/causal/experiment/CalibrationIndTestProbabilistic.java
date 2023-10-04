@@ -50,7 +50,7 @@ public class CalibrationIndTestProbabilistic {
         Parameters parameters = new Parameters();
 
         // pag sampling
-        int numRandomizedSearchModels = 1;
+        int numRandomizedSearchModels = 100;
         parameters.set(Params.NUM_RANDOMIZED_SEARCH_MODELS, numRandomizedSearchModels);
 
         // rfci

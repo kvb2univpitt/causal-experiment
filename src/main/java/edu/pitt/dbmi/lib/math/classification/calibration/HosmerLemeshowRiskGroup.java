@@ -96,8 +96,9 @@ public class HosmerLemeshowRiskGroup extends AbstractHosmerLemeshow {
 
             groupNumber++;
 
-            // prevents threshold from going over 1.0
-            if (threshold < 0.9) {
+            threshold += increment;
+            // use threshold 1.10 instead of 1.0 to handle prediction = 1.0
+            if (threshold >= 0.99) {
                 threshold += increment;
             }
         }
@@ -130,8 +131,9 @@ public class HosmerLemeshowRiskGroup extends AbstractHosmerLemeshow {
                 }
             }
 
-            // prevents threshold from going over 1.0
-            if (threshold < 0.9) {
+            threshold += increment;
+            // use threshold 1.10 instead of 1.0 to handle prediction = 1.0
+            if (threshold >= 0.99) {
                 threshold += increment;
             }
         }

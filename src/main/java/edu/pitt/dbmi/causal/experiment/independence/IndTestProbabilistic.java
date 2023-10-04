@@ -214,14 +214,25 @@ public class IndTestProbabilistic implements IndependenceTest {
         posterior = p;
 
         // reassign posterior probability
-//        if (p < 0.1) {
+        if (p < 0.39) {
+            p = 0;
+        } else if (p >= 0.39 && p < 0.9) {
+            p = 0.222222;
+        } else if (p >= 0.9 && p < 0.92) {
+            p = 0.500000;
+        } else if (p >= 0.92 && p < 0.97) {
+            p = 0.0;
+        } else {
+            p = 0.666667;
+        }
+//        if (p < 0.2) {
 //            p = 0;
-//        } else if (p >= 0.1 && p < 0.9) {
-//            p = 0.071429;
-//        } else if (p >= 0.9 && p < 0.97) {
-//            p = 0.125000;
+//        } else if (p >= 0.2 && p < 0.8) {
+//            p = 0.115385;
+//        } else if (p >= 0.8 && p < 0.97) {
+//            p = 0.300000;
 //        } else {
-//            p = 0.704698;
+//            p = 0.643678;
 //        }
         // if (p < 0.1) {
         //     p = 0;

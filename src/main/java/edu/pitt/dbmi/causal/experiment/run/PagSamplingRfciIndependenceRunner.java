@@ -100,10 +100,10 @@ public class PagSamplingRfciIndependenceRunner extends PagSamplingRfciRunner {
         graphStats.saveGraphData(Paths.get(edgeTypeOutputDir, "ta_edge_data.csv"));
         graphStats.saveStatistics(Paths.get(edgeTypeOutputDir, "ta_statistics.txt"));
         graphStats.saveCalibrationPlot(
-                "PAG Sampling RFCI", "ta_pag-sampling-rfci",
+                "PAG Sampling RFCI: Tail-Arrow", "ta_pag-sampling-rfci",
                 1000, 1000,
                 Paths.get(edgeTypeOutputDir, "ta_calibration.png"));
-        graphStats.saveROCPlot("PAG Sampling RFCI", "ta_pag-sampling-rfci",
+        graphStats.saveROCPlot("PAG Sampling RFCI: Tail-Arrow", "ta_pag-sampling-rfci",
                 1000, 1000, Paths.get(edgeTypeOutputDir, "ta_roc.png"));
 
         // circle-arrow
@@ -115,10 +115,10 @@ public class PagSamplingRfciIndependenceRunner extends PagSamplingRfciRunner {
         graphStats.saveGraphData(Paths.get(edgeTypeOutputDir, "ca_edge_data.csv"));
         graphStats.saveStatistics(Paths.get(edgeTypeOutputDir, "ca_statistics.txt"));
         graphStats.saveCalibrationPlot(
-                "PAG Sampling RFCI", "pag-sampling-rfci",
+                "PAG Sampling RFCI: Circle-Arrow", "pag-sampling-rfci",
                 1000, 1000,
                 Paths.get(edgeTypeOutputDir, "ca_calibration.png"));
-        graphStats.saveROCPlot("PAG Sampling RFCI", "ca_pag-sampling-rfci",
+        graphStats.saveROCPlot("PAG Sampling RFCI: Circle-Arrow", "ca_pag-sampling-rfci",
                 1000, 1000, Paths.get(edgeTypeOutputDir, "ca_roc.png"));
 
         // circle-circle
@@ -130,10 +130,10 @@ public class PagSamplingRfciIndependenceRunner extends PagSamplingRfciRunner {
         graphStats.saveGraphData(Paths.get(edgeTypeOutputDir, "cc_edge_data.csv"));
         graphStats.saveStatistics(Paths.get(edgeTypeOutputDir, "cc_statistics.txt"));
         graphStats.saveCalibrationPlot(
-                "PAG Sampling RFCI", "pag-sampling-rfci",
+                "PAG Sampling RFCI: Circle-Circle", "pag-sampling-rfci",
                 1000, 1000,
                 Paths.get(edgeTypeOutputDir, "cc_calibration.png"));
-        graphStats.saveROCPlot("PAG Sampling RFCI", "cc_pag-sampling-rfci",
+        graphStats.saveROCPlot("PAG Sampling RFCI: Circle-Circle", "cc_pag-sampling-rfci",
                 1000, 1000, Paths.get(edgeTypeOutputDir, "cc_roc.png"));
 
         // arrow-arrow
@@ -145,10 +145,10 @@ public class PagSamplingRfciIndependenceRunner extends PagSamplingRfciRunner {
         graphStats.saveGraphData(Paths.get(edgeTypeOutputDir, "aa_edge_data.csv"));
         graphStats.saveStatistics(Paths.get(edgeTypeOutputDir, "aa_statistics.txt"));
         graphStats.saveCalibrationPlot(
-                "PAG Sampling RFCI", "pag-sampling-rfci",
+                "PAG Sampling RFCI: Arrow-Arrow", "pag-sampling-rfci",
                 1000, 1000,
                 Paths.get(edgeTypeOutputDir, "aa_calibration.png"));
-        graphStats.saveROCPlot("PAG Sampling RFCI", "aa_pag-sampling-rfci",
+        graphStats.saveROCPlot("PAG Sampling RFCI: Arrow-Arrow", "aa_pag-sampling-rfci",
                 1000, 1000, Paths.get(edgeTypeOutputDir, "aa_roc.png"));
 
         String outputDir = dirOut.toString();
