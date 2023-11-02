@@ -1,0 +1,6 @@
+Graph Nodes:
+X;Y
+
+Graph Edges:
+1. X --> Y
+

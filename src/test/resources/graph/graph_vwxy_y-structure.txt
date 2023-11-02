@@ -1,0 +1,8 @@
+Graph Nodes:
+W;V;X;Y
+
+Graph Edges:
+1. V --> X
+2. W --> X
+3. X --> Y
+

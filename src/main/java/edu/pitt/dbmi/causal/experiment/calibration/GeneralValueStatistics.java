@@ -70,10 +70,10 @@ public class GeneralValueStatistics {
     }
 
     public void saveData(Path file) throws IOException {
+        GeneralValue[] values = generalValues.toArray(GeneralValue[]::new);
+        Arrays.sort(values, Collections.reverseOrder());
         try (PrintStream writer = new PrintStream(file.toFile())) {
-            GeneralValue[] values = generalValues.toArray(GeneralValue[]::new);
-            Arrays.sort(values, Collections.reverseOrder());
-
+            writer.println("Independent Test,Predicted,Observed");
             Arrays.stream(values).forEach(value -> {
                 writer.printf("\"%s\",%f,%d%n", value.getLabel(), value.getPredictedValue(), value.getObservedValue());
             });

@@ -19,6 +19,7 @@ import edu.pitt.dbmi.causal.experiment.calibration.GraphData;
 import edu.pitt.dbmi.causal.experiment.calibration.GraphStatistics;
 import edu.pitt.dbmi.causal.experiment.data.SimulatedData;
 import edu.pitt.dbmi.causal.experiment.independence.wrapper.CalibratingIndTestProbabilisticTest;
+import static edu.pitt.dbmi.causal.experiment.run.AbstractRunner.DATETIME_FORMATTER;
 import edu.pitt.dbmi.causal.experiment.tetrad.Graphs;
 import edu.pitt.dbmi.causal.experiment.util.FileIO;
 import edu.pitt.dbmi.causal.experiment.util.GraphDetails;
@@ -37,13 +38,13 @@ import java.util.stream.Collectors;
 
 /**
  *
- * Apr 26, 2023 2:17:26 PM
+ * Oct 4, 2023 2:34:57 PM
  *
  * @author Kevin V. Bui (kvb2univpitt@gmail.com)
  */
-public class PagSamplingRfciIndependenceRunner extends PagSamplingRfciRunner {
+public class PagSamplingRfciCalibratingIndependenceRunner extends PagSamplingRfciRunner {
 
-    public PagSamplingRfciIndependenceRunner(SimulatedData simulatedData, Parameters parameters) {
+    public PagSamplingRfciCalibratingIndependenceRunner(SimulatedData simulatedData, Parameters parameters) {
         super(simulatedData, parameters);
     }
 
@@ -51,7 +52,6 @@ public class PagSamplingRfciIndependenceRunner extends PagSamplingRfciRunner {
         Graph trueGraph = createGraph(dataModel, simulatedData.getPagFromDagGraph());
         IndTestDSep indTestDSeperation = new IndTestDSep(trueGraph, true);
 
-//        Rfci rfci = new Rfci((new ProbabilisticTest()).getTest(dataModel, parameters, indTestDSeperation, generalValues, condProbLabels));
         Rfci rfci = new Rfci((new CalibratingIndTestProbabilisticTest()).getTest(dataModel, parameters, indTestDSeperation, generalValues, condProbLabels, debugOutputs));
         rfci.setDepth(parameters.getInt(Params.DEPTH));
         rfci.setMaxPathLength(parameters.getInt(Params.MAX_PATH_LENGTH));
@@ -211,6 +211,13 @@ public class PagSamplingRfciIndependenceRunner extends PagSamplingRfciRunner {
             writer.println("High-Edge-Probability Graph");
             writer.println("========================================");
             writer.println(searchGraph.toString().replaceAll(" - ", " ... ").trim());
+        }
+
+        if (!debugOutputs.isEmpty()) {
+            try (PrintStream writer = new PrintStream(Paths.get(outputDir, "debug_output.csv").toFile())) {
+                writer.println("test of independence,bc inference,c,b,m,n,r,return value,is independent (d-sep),is independent (coin flip)");
+                debugOutputs.forEach(writer::println);
+            }
         }
     }
 

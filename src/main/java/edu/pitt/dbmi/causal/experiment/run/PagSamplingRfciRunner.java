@@ -164,15 +164,15 @@ public class PagSamplingRfciRunner extends AbstractRunner {
 
         writer.println("Probabilistic Test");
         writer.println("--------------------");
-        writer.printf("%s: %s%n",
-                paramDescs.get(Params.CUTOFF_IND_TEST).getShortDescription(),
-                getParameterValue(parameters, Params.CUTOFF_IND_TEST));
+//        writer.printf("%s: %s%n",
+//                paramDescs.get(Params.CUTOFF_IND_TEST).getShortDescription(),
+//                getParameterValue(parameters, Params.CUTOFF_IND_TEST));
         writer.printf("%s: %s%n",
                 paramDescs.get(Params.PRIOR_EQUIVALENT_SAMPLE_SIZE).getShortDescription(),
                 getParameterValue(parameters, Params.PRIOR_EQUIVALENT_SAMPLE_SIZE));
-        writer.printf("%s: %s%n",
-                paramDescs.get(Params.NO_RANDOMLY_DETERMINED_INDEPENDENCE).getShortDescription(),
-                getParameterValue(parameters, Params.NO_RANDOMLY_DETERMINED_INDEPENDENCE));
+//        writer.printf("%s: %s%n",
+//                paramDescs.get(Params.NO_RANDOMLY_DETERMINED_INDEPENDENCE).getShortDescription(),
+//                getParameterValue(parameters, Params.NO_RANDOMLY_DETERMINED_INDEPENDENCE));
     }
 
     protected Graph runSearch(DataModel dataModel, Parameters parameters) {

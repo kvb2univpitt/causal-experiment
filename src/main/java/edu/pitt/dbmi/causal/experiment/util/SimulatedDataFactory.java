@@ -20,6 +20,7 @@ package edu.pitt.dbmi.causal.experiment.util;
 
 import edu.cmu.tetrad.algcomparison.Comparison;
 import edu.cmu.tetrad.algcomparison.graph.RandomForward;
+import edu.cmu.tetrad.algcomparison.graph.SingleGraph;
 import edu.cmu.tetrad.algcomparison.simulation.BayesNetSimulation;
 import edu.cmu.tetrad.algcomparison.simulation.Simulation;
 import edu.cmu.tetrad.data.DataSet;
@@ -40,6 +41,21 @@ import java.nio.file.Path;
 public final class SimulatedDataFactory {
 
     private SimulatedDataFactory() {
+    }
+
+    public static SimulatedData createBayesNetSimulationData(Graph graph, int numOfCases, int avgDegree, long seed, Path dirOut) throws Exception {
+        Simulation simulation = new BayesNetSimulation(new SingleGraph(graph));
+        Parameters parameters = createParameters(simulation, numOfCases, avgDegree, seed);
+        simulation.createData(parameters, true);
+
+        // save data and true graph
+        DataSet dataSet = (DataSet) simulation.getDataModel(0);
+        Graph trueGraph = simulation.getTrueGraph(0);
+        Graph pagFromDagGraph = GraphSearchUtils.dagToPag(trueGraph);
+
+        new Comparison().saveToFilesSingleSimulation(dirOut.toString(), simulation, parameters);
+
+        return new SimulatedData(dataSet, trueGraph, pagFromDagGraph);
     }
 
     public static SimulatedData createBayesNetSimulationData(int numOfVariables, int numOfCases, int avgDegree, long seed, Path dirOut) throws Exception {
@@ -68,6 +84,23 @@ public final class SimulatedDataFactory {
         // override parameter values
         parameters.set(Params.RANDOMIZE_COLUMNS, Boolean.FALSE);
         parameters.set(Params.NUM_MEASURES, numOfVariables);
+        parameters.set(Params.SAMPLE_SIZE, numOfCases);
+        parameters.set(Params.AVG_DEGREE, avgDegree);
+        parameters.set(Params.SEED, seed);
+
+        return parameters;
+    }
+
+    private static Parameters createParameters(Simulation simulation, int numOfCases, int avgDegree, long seed) {
+        Parameters parameters = new Parameters();
+
+        ParamDescriptions paramDescs = ParamDescriptions.getInstance();
+        for (String param : simulation.getParameters()) {
+            parameters.set(param, paramDescs.get(param).getDefaultValue());
+        }
+
+        // override parameter values
+        parameters.set(Params.RANDOMIZE_COLUMNS, Boolean.FALSE);
         parameters.set(Params.SAMPLE_SIZE, numOfCases);
         parameters.set(Params.AVG_DEGREE, avgDegree);
         parameters.set(Params.SEED, seed);
